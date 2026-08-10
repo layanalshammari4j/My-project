@@ -1,34 +1,47 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class Shoot : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
-
-    public float speed = 5f; // Movement speed, adjustable in Inspector
+  
+    [SerializeField] private float speed = 5f;
+    private Rigidbody2D rb; // Reference to the player's Rigidbody 2D
+    private Vector2 movement; // Stores the direction of movement
 
     void Start()
     {
-        // Runs once when the game starts
+        // Get the Rigidbody 2D attached to the player
+        rb = GetComponent<Rigidbody2D>();
     }
 
     void Update()
     {
-        // Runs every frame while the game is running
-        Vector3 movement = Vector3.zero; // Reset movement each frame
+        // Reset movement every frame
+        movement = Vector2.zero;
 
-        // Check horizontal input (right/left)
-        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
+        // Check if the player is moving right
+        if (Keyboard.current.rightArrowKey.isPressed || Keyboard.current.dKey.isPressed)
             movement.x = 1f;
-        else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
+
+        // Check if the player is moving left
+        else if (Keyboard.current.leftArrowKey.isPressed || Keyboard.current.aKey.isPressed)
             movement.x = -1f;
 
-        // Check vertical input (up/down)
-        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
+        // Check if the player is moving up
+        if (Keyboard.current.upArrowKey.isPressed || Keyboard.current.wKey.isPressed)
             movement.y = 1f;
-        else if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
-            movement.y = -1f;
 
-        // Apply movement, scaled by speed and frame time
-        transform.position += movement * speed * Time.deltaTime;
+        // Check if the player is moving down
+        else if (Keyboard.current.downArrowKey.isPressed || Keyboard.current.sKey.isPressed)
+            movement.y = -1f;
     }
 
+    void FixedUpdate()
+    {
+        // Move the player using Rigidbody 2D
+        // FixedUpdate is used for physics-related movement
+        rb.MovePosition(
+            rb.position + movement * speed * Time.fixedDeltaTime
+        );
+    }
 }
